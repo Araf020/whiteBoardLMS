@@ -8,6 +8,7 @@ import LibraryAddTwoToneIcon from '@mui/icons-material/LibraryAddTwoTone';
 const CreateAss = () => {
 
     const [courseId, setCourseId] = useState('');
+    const [courseList, setCourseList] = useState([]);
     const [desc, setDesc] = useState('No Description Added!');
 
     const[assTitle, setAssTitle] = useState('');
@@ -15,7 +16,53 @@ const CreateAss = () => {
 
     const [assFile,setAssFile] = useState(null);
     const [grade, setGrade]= useState();
+
+    const courses = [{
+        id:1,
+        courseTitle:'Bangla language studies',
+        courseCode:'BAN101'
+    },
+    {
+        id:2,
+        courseTitle:'English language studies',
+        courseCode:'ENG101'
+    },
+    {
+        id:3,
+        courseTitle:'Mathematics',
+        courseCode:'MAT101'
+    
+    },
+    {
+        id:4,
+        courseTitle:'Physics',
+        courseCode:'PHY101'
+    }
+
+    ];
     const grades = ['five','six','seven','eight','nine','ten'];
+
+    useEffect(() => {
+        // get course list by grade
+        // make grade lowercase
+        if(grade){
+            
+            // const lowercaseStr = "grade".toLowerCase();
+            // let grade_ = grade.toLowerCase();
+            fetch('http://localhost:8080/api/courses_by_grade/'+grade)
+            .then(res => res.json())
+            .then(data => {
+                console.log("courses: ",data);
+                setCourseList(data);
+            }
+            )
+            .catch(err => console.log(err));
+    
+            
+    
+        }
+    
+       }, [grade]);
 
 
     return (
@@ -65,6 +112,38 @@ const CreateAss = () => {
                         />
                 </Grid>
                 <Grid item >
+                        <Autocomplete
+                            id="place-select"
+                            sx={{ width: 300 }}
+                            
+                            value={courseId}
+                            onChange={(event, newValue) => {
+                            console.log(newValue.courseId);
+                            setCourseId(newValue.courseId);
+                            
+                            }}
+                            options={courseList}
+                            autoHighlight
+                            getOptionLabel={(option) => option.courseTitle+' , '+option.courseCode}
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} >
+                                {option.courseTitle} , {option.courseCode}
+                                </Box>
+                            )}
+                            renderInput={(params) => (
+                                <TextField
+                                {...params}
+                                label="Select a Course"
+                                inputProps={{
+                                    ...params.inputProps,
+                                    autoComplete: 'new-password', // disable autocomplete and autofill
+                                }}
+                                />
+                            )}
+                            />
+
+                </Grid>
+                <Grid item >
                     <TextField
                         id="outlined-basic"
                         label="Assignment Title"
@@ -90,7 +169,7 @@ const CreateAss = () => {
                         />
                 </Grid>
                 
-                <Grid item>
+                {/* <Grid item>
 
                     <FormControl variant="outlined" style={{minWidth: 230}}>
                         <InputLabel id="demo-simple-select-outlined-label">Course</InputLabel>
@@ -111,7 +190,7 @@ const CreateAss = () => {
                         </Select>
                     </FormControl>
 
-                </Grid>
+                </Grid> */}
                 <Grid item>
                     {/* make a fancy file input button and take the file */}
                     <input  type='file' onChange={(e) => setAssFile(e.target.files[0])}/>

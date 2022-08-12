@@ -5,6 +5,7 @@ import useStyles from '../Dashboard/Teams/TeamsStyle';
 import {useState, useEffect} from 'react';
 import {Button, Autocomplete, Box,TextField, InputLabel, Select, MenuItem, Input, InputAdornment, IconButton, FormHelperText, FormLabel, RadioGroup, Radio, FormGroup, FormControl} from '@mui/material';
 import LibraryAddTwoToneIcon from '@mui/icons-material/LibraryAddTwoTone';
+import axios from 'axios';
 
 
 
@@ -19,61 +20,13 @@ const Assign = () => {
     const [instructorList, setInstructorList] = useState([]); 
 
 
-    const courses = [{
-        id:1,
-        courseTitle:'Bangla language studies',
-        courseCode:'BAN101'
-    },
-    {
-        id:2,
-        courseTitle:'English language studies',
-        courseCode:'ENG101'
-    },
-    {
-        id:3,
-        courseTitle:'Mathematics',
-        courseCode:'MAT101'
     
-    },
-    {
-        id:4,
-        courseTitle:'Physics',
-        courseCode:'PHY101'
-    }
-
-    ];
     
     const grades = [
-        {
-            id:1,
-        grade:'Ten'
-    },
-    {
-        id:2,
-        grade:'Nine'
-    },
-    {
-        id:3,
-        grade:'Eight'
-    }
-    ,{
-        id:4,
-        grade:'Seven'
-    },
-    {
-        id:5,
-        grade:'Six'
-    },
-    {
-        id:6,
-        grade:'Five'
-
-    }
-    
-
-
+     'Ten','Nine','Eight','Seven','Six','Five'
        
     ]
+
     const instructors = [{
         id:1,
         name:'Rakibul Islam',
@@ -106,18 +59,74 @@ const Assign = () => {
 
 ];
 
-   
+   useEffect(() => {
 
-   
+      fetch('http://localhost:8080/api/instructors')
+        .then(res => res.json())
+        .then(data => {
+            setInstructorList(data);
+            console.log("inst",data);
+        })
+        .catch(err => console.log(err));
+
+   },[]);
+
+   useEffect(() => {
+    // get course list by grade
+    // make grade lowercase
+    if(grade){
+        
+        // const lowercaseStr = "grade".toLowerCase();
+        // let grade_ = grade.toLowerCase();
+        fetch('http://localhost:8080/api/courses_by_grade/'+grade)
+        .then(res => res.json())
+        .then(data => {
+            console.log("courses: ",data);
+            setCourseList(data);
+        }
+        )
+        .catch(err => console.log(err));
+
+        
+
+    }
+
+   }, [grade]);
 
     useEffect(() => {
-        console.log("instr: ",instructorId);
-        console.log("courseId: ",courseId);
-        console.log("grade: ",grade);
+       if(courseId){
+           console.log("courseId",courseId);
+           console.log("instructorId",instructorId);
+           
 
-    }, [grade,courseId,instructorId]);
+          
+
+       }
+
+    }, [instructorId]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("submitting..");
+        
+        // put request to server using axios
+        axios.put('http://localhost:8080/api/assign_course/'+instructorId+'/'+courseId,{
+            courseId:courseId,
+            instructorId:instructorId
+        })
+        .then(res => {
+            console.log(res);
+            // if ok then show greetins message
+            alert("Course assigned successfully");
+
+        })
+        .catch(err => {
+            console.log(err);
+            alert("Something went wrong! Try Again");
+        });
 
 
+    }
     return (
         <div>
         <Grid container direction='column' spacing={2}>
@@ -141,17 +150,17 @@ const Assign = () => {
                         sx={{ width: 300 }}
                         value={grade}
                         onChange={(event, newValue) => {
-                        console.log("grade: ",newValue.id);
-                        setGrade(newValue.id);
+                        console.log("grade: ",newValue);
+                        setGrade(newValue);
                         
                         }}
 
                         options={grades}
                         autoHighlight
-                        getOptionLabel={(option) => option.grade}
+                        getOptionLabel={(option) => option}
                         renderOption={(props, option) => (
                             <Box component="li" {...props} >
-                            {option.grade}
+                            {option}
                             </Box>
                         )}
 
@@ -168,34 +177,34 @@ const Assign = () => {
                         />
                 </Grid>
                 <Grid item >
-                <Autocomplete
-                        id="place-select"
-                        sx={{ width: 300 }}
-                        value={courseId}
-                        onChange={(event, newValue) => {
-                        console.log(newValue.id);
-                        setCourseId(newValue.id);
-                        
-                        }}
-                        options={courses}
-                        autoHighlight
-                        getOptionLabel={(option) => option.courseTitle+' , '+option.courseCode}
-                        renderOption={(props, option) => (
-                            <Box component="li" {...props} >
-                            {option.courseTitle} , {option.courseCode}
-                            </Box>
-                        )}
-                        renderInput={(params) => (
-                            <TextField
-                            {...params}
-                            label="Choose a Course"
-                            inputProps={{
-                                ...params.inputProps,
-                                autoComplete: 'new-password', // disable autocomplete and autofill
+                    <Autocomplete
+                            id="place-select"
+                            sx={{ width: 300 }}
+                            value={courseId}
+                            onChange={(event, newValue) => {
+                            console.log(newValue.courseId);
+                            setCourseId(newValue.courseId);
+                            
                             }}
+                            options={courseList}
+                            autoHighlight
+                            getOptionLabel={(option) => option.courseTitle+' , '+option.courseCode}
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} >
+                                {option.courseTitle} , {option.courseCode}
+                                </Box>
+                            )}
+                            renderInput={(params) => (
+                                <TextField
+                                {...params}
+                                label="Choose a Course"
+                                inputProps={{
+                                    ...params.inputProps,
+                                    autoComplete: 'new-password', // disable autocomplete and autofill
+                                }}
+                                />
+                            )}
                             />
-                        )}
-                        />
                 </Grid>
             
                 <Grid item>
@@ -204,11 +213,11 @@ const Assign = () => {
                         sx={{ width: 300 }}
                         value={instructorId}
                         onChange={(event, newValue) => {
-                        console.log("ass: ",newValue.id);
-                        setInstructor(newValue.id);
+                        console.log("ass: ",newValue.instructorId);
+                        setInstructor(newValue.instructorId);
                         
                         }}
-                        options={instructors}
+                        options={instructorList}
                         autoHighlight
                         getOptionLabel={(option) => option.name+' , '+option.speciality}
                         renderOption={(props, option) => (
@@ -253,7 +262,9 @@ const Assign = () => {
             <Grid item container>
                 <Grid item sm={5}/>
                 <Grid item>
-                <Button variant="contained" color="primary" style={{marginTop:'20px', marginBottom:'20px'}}>
+                <Button variant="contained" color="primary" style={{marginTop:'20px', marginBottom:'20px'}}
+                onClick={handleSubmit}
+                >
                     Assign Instructor
                 </Button>
                 </Grid>

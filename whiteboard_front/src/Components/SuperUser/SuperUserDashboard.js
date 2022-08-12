@@ -10,7 +10,7 @@ import AssignInstructor from './AssignInstructor';
 
 const Dashboard = () => {
     const classes = useStyles();
-    const[component, setComponent] = useState(<div></div>);
+    const[component, setComponent] = useState(<div> <AssignInstructor/></div>);
     const[option, setOption] = useState('post');
 
     useEffect(() => {

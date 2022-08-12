@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class InstructorController {
@@ -66,18 +68,61 @@ public class InstructorController {
     @PutMapping("/assign_course/{instructorId}/{courseId}")
     public ResponseEntity<Instructor> assignCourse(@PathVariable("instructorId") long instructorId, @PathVariable("courseId") long courseId) {
         try
-        {
-            Instructor instructor = instructorRepo.findById(instructorId).get();
-            Course course = courseRepo.findById(courseId).get();
+        {   
+            System.out.println("instructorId: " + instructorId);
+            System.out.println("courseId: " + courseId);
+            Instructor instructor = null;
+            Optional<Instructor> optionalInstructor = instructorRepo.findById(instructorId);
+            if (optionalInstructor.isPresent())
+            {
+                instructor = optionalInstructor.get();
+            }
+            else
+            {
+                System.out.println("Instructor not found");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            Course course = null;
+            Optional<Course> optionalCourse = courseRepo.findById(courseId);
+            if (optionalCourse.isPresent())
+            {
+                course = optionalCourse.get();
+            }
+            else
+            {
+                System.out.println("Course not found");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
            
             instructor.addCourse(course);
             instructorRepo.save(instructor);
         }
         catch (Exception e)
         {
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/instructor/course/{instructorId}")
+    public ResponseEntity<List<Course>> getInstructorCourse(@PathVariable("instructorId") long instructorId) {
+        
+
+        Set<Course> courses = instructorRepo.findById(instructorId).get().getCourses();
+        
+        if (courses.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        // convert set to list
+        List<Course> courseList = new ArrayList<>(courses);
+       
+
+        if (courses.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(courseList, HttpStatus.OK);
+
     }
 
 

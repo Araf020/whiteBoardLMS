@@ -48,6 +48,8 @@ public class CourseController {
     public ResponseEntity<List<Course>> getCoursesByGrade(@PathVariable("grade") String grade) {
         List<Course> courses = new ArrayList<>();
 
+        grade = grade.toLowerCase();
+
         courseRepo.findCourseByCourseGrade(grade).forEach(courses::add);
 
         if (courses.isEmpty())
