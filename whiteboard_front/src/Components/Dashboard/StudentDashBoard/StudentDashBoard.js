@@ -8,6 +8,7 @@ import CompletedAssignment from '../../Assignments/Completed';
 import useStyles from './TeamsStyle';
 import Card_ from './CourseCard';
 import {useState, useEffect} from 'react';
+import Enrollment from '../Enroll/Enroll';
 
 
 function Teams() {
@@ -99,6 +100,14 @@ function Teams() {
                 <div>
                     <Typography>Your Notices</Typography>
                     <Declarations />
+                </div>
+            );
+        }
+        else if(option === 'enroll'){
+            setComponent(
+                <div>
+                    <Typography>Enrollment</Typography>
+                    <Enrollment />
                 </div>
             );
         }

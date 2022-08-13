@@ -1,10 +1,13 @@
 import { Grid, Typography,Card,CardContent, Paper} from '@mui/material';
 import React from 'react';
 
-import useStyles from '../../Dashboard/Teams/TeamsStyle';
+import useStyles from '../../Dashboard/StudentDashBoard/TeamsStyle';
 import {useState, useEffect} from 'react';
 import {Button, TextField, Box, Autocomplete, InputLabel, Select, MenuItem, Input, InputAdornment, IconButton, FormHelperText, FormLabel, RadioGroup, Radio, FormGroup, FormControl} from '@mui/material';
 import LibraryAddTwoToneIcon from '@mui/icons-material/LibraryAddTwoTone';
+import {storage} from "../../Firebase_/Conf";
+import axios from 'axios';
+
 const CreateAss = () => {
 
     const [courseId, setCourseId] = useState('');
@@ -15,6 +18,10 @@ const CreateAss = () => {
     const [dueDate, setDueDate] = useState(''); 
 
     const [assFile,setAssFile] = useState(null);
+    const [assFileUrl,setAssFileUrl] = useState(null);
+    const [progress, setProgress] = useState(0);
+
+
     const [grade, setGrade]= useState();
 
     const courses = [{
@@ -64,6 +71,114 @@ const CreateAss = () => {
     
        }, [grade]);
 
+       useEffect(() => {
+
+            if(assFile){
+                console.log("uploading");
+           
+       
+                const uploadTask = storage.ref(`files/${assFile.name}`).put(assFile);
+                uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    setProgress(progress);
+                },
+
+                (error) => {
+                    console.log(error);
+                },
+
+                () => {
+                    storage
+                    .ref('files')
+                    .child(assFile.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        console.log(url);
+                        setAssFileUrl(url);
+                        
+
+
+                    })
+                });
+            }
+       }, [assFile]);
+
+    //    print url
+    useEffect(() => {
+        if(assFileUrl){
+            console.log("assFileUrl: ",assFileUrl);
+        }
+    }, [assFileUrl]);
+
+
+       const uploadFile = (e) => {
+            if(e.target.files[0]){
+                
+                setAssFile(e.target.files[0]);
+                
+
+            }
+       }
+
+    //    post data to server
+       const handleSubmit = (e) => {
+        e.preventDefault();
+        // chanfe dueDate format to dd-mm-yyyy hh:mm:ss
+        const date = new Date(dueDate);
+        const dueDate_ = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+        const requestBody = {
+            
+            title: assTitle,
+            description: desc,
+            deadline: dueDate_,
+            specLink: assFileUrl ? assFileUrl : "No Specification Link",
+            courseId: courseId+""
+            
+            
+        };
+
+        console.log("requestBody: ",requestBody);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(requestBody)
+        } ;
+      
+        fetch('http://localhost:8080/api/create_assignment', requestOptions)
+        .then(res => res.json())
+        .then(data => {
+            console.log("data: ",data);
+            alert("Assignment Created Successfully!");
+        })
+        .catch(err =>{ console.log(err);
+        alert("Assignment Creation Failed!");
+    });
+
+
+        // axios.post('http://localhost:8080/api/create_assignment', requestOptions)
+        // .then(res => {
+        //     console.log("res: ",res);
+        //     alert("Assignment Created SuccessFully!");
+        // })
+        // .catch(err =>{ 
+        //     console.log(err) ;
+        //     alert("something went wrong!");
+        // });
+        
+
+            // "title": "Assignment on Michael ModhuSudan",
+            // "description": "This is an group assignment. The groups will be arranged and i will let you know. The assignment is attached below",
+            // "deadline": "2022-08-04 03:50:40",
+            // "specLink":"/spec/spec.pdf",
+            // "courseId": "2"
+
+       }
+
 
     return (
         <div>
@@ -80,7 +195,7 @@ const CreateAss = () => {
             </Grid>
 
             <Grid item container spacing={2}>
-                <Grid item sm={1}/>
+                {/* <Grid item sm={1}/> */}
                 <Grid item>
                     <Autocomplete
                         id="place-select"
@@ -109,7 +224,8 @@ const CreateAss = () => {
                             }}
                             />
                         )}
-                        />
+                    />
+
                 </Grid>
                 <Grid item >
                         <Autocomplete
@@ -193,13 +309,15 @@ const CreateAss = () => {
                 </Grid> */}
                 <Grid item>
                     {/* make a fancy file input button and take the file */}
-                    <input  type='file' onChange={(e) => setAssFile(e.target.files[0])}/>
+                    <input  type='file' onChange={uploadFile}/>
+                    <progress value={progress} max="100"/>
+                    
                     {/* put a text with ash back ground */}
                     
-                    <Button variant='contained' color='primary' >Attach</Button>
+                    {/* <Button variant='contained' color='primary' >Attach</Button> */}
                 </Grid>
                 
-                <Grid item sm={1}/>
+                {/* <Grid item sm={1}/> */}
             </Grid>
             <Grid item container>
                 <Grid item sm={3}/>
@@ -220,7 +338,9 @@ const CreateAss = () => {
             <Grid item container>
                 <Grid item sm={5}/>
                 <Grid item>
-                <Button variant="contained" color="primary" style={{marginTop:'20px', marginBottom:'20px'}}>
+                <Button variant="contained" color="primary" style={{marginTop:'20px', marginBottom:'20px'}}
+                onClick={handleSubmit}
+                >
                     Create Assignment
                 </Button>
                 </Grid>

@@ -1,7 +1,7 @@
 import { Grid, Typography,Card,CardContent, Paper} from '@mui/material';
 import React from 'react';
 
-import useStyles from '../../Dashboard/Teams/TeamsStyle';
+import useStyles from '../../Dashboard/StudentDashBoard/TeamsStyle';
 import {useState, useEffect} from 'react';
 import {Button, TextField, InputLabel, Select, MenuItem, Input, InputAdornment, IconButton, FormHelperText, FormLabel, RadioGroup, Radio, FormGroup, FormControl} from '@mui/material';
 import LibraryAddTwoToneIcon from '@mui/icons-material/LibraryAddTwoTone';

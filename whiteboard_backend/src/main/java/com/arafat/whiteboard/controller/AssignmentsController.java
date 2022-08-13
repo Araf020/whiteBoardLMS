@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class AssignmentsController {
@@ -59,6 +59,7 @@ public class AssignmentsController {
         return new ResponseEntity<>(assignment, HttpStatus.CREATED);
     }
 
+    
 //    update an assignment
    @PutMapping("/assignments/{id}")
    public ResponseEntity<Assignments> updateAssignment(@PathVariable("id") Long id, @RequestBody Assignments assignment) {

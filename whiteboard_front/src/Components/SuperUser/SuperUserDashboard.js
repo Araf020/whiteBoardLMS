@@ -1,7 +1,7 @@
 import { Grid, Typography} from '@mui/material';
 import React from 'react';
 
-import useStyles from '../Dashboard/Teams/TeamsStyle';
+import useStyles from '../Dashboard/StudentDashBoard/TeamsStyle';
 import {useState, useEffect} from 'react';
 import SideDrawer from './SideDrawer';
 import Approve from './Approve';

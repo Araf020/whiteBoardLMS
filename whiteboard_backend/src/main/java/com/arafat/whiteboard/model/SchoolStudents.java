@@ -1,6 +1,8 @@
 package com.arafat.whiteboard.model;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -80,12 +82,20 @@ public class SchoolStudents {
     )
     private List<Course> courseList;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "notice_student",
+            joinColumns = @JoinColumn(name = "studentId"),
+            inverseJoinColumns = @JoinColumn(name = "noticeId")
+    )
+    private List<CourseNotice> noticeList;
+    
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
             })
-    @JoinTable(name = "tutorial_tags",
+    @JoinTable(name = "std_course",
             joinColumns = { @JoinColumn(name = "studentId") },
             inverseJoinColumns = { @JoinColumn(name = "courseId") })
     private Set<Course> courses = new HashSet<>();
@@ -258,6 +268,17 @@ public class SchoolStudents {
     public SchoolStudents setPassword(String password){
         this.password = password;
         return this;
+    }
+
+    public List<CourseNotice> getNoticeList() {
+        return noticeList;
+    }
+    public CourseNotice addNotice(CourseNotice notice){
+        if(noticeList == null){
+            noticeList = new ArrayList<>();
+        }
+        noticeList.add(notice);
+        return notice;
     }
 
 

@@ -1,0 +1,98 @@
+// <Grid container>
+//             <Grid item lg={9} xs={12} md={8}>
+//                 <div className={classes.btn}>
+//                     <Button style={{marginRight:'10px'}} variant="outlined">Add</Button>
+//                     <Button variant="outlined">Remove</Button>
+//                 </div>
+//                 <img className={classes.Img}  src={url}/>
+//             </Grid>
+//             <Grid item lg={3} xs={12} md={4} className={classes.rightSidebar}>
+//             <Typography>1 photo selected</Typography>
+//                 {/* <div>
+//                 <Checkbox
+//                 color="primary"
+//                 />
+//                 License the photo 
+//             </div> */}
+
+//             <TextField id="outlined-basic" className={classes.textFieldInput} label="Title*" variant="outlined" />
+//             <Autocomplete
+//                 disablePortal
+//                 id="combo-box-demo"
+//                 options={privacy}
+//                 sx={{ width: 300 }}
+//                 renderInput={(params) => <TextField {...params} label="Privacy" />}
+//                 />
+//             <TextareaAutosize
+//             className={classes.textFieldInput}
+//                 aria-label="minimum height"
+//                 minRows={3}
+//                 placeholder="Description"
+//                 style={{ width: 300 }}
+//             />
+//             <TextField className={classes.textFieldInput} id="outlined-basic" label="Location*" variant="outlined" />
+
+
+//             </Grid>
+
+//         </Grid>
+//                 </div>
+
+            //     <Grid container >
+            //     <Grid item xs={12} sm={1} />
+                
+            //     {/* image preview section */}
+            //     <Grid item xs={7} container direction="row" >
+            //         <Grid item xs = {12} sm={12} spacing={2}>
+            //             {/* put add button */}
+            //             <Button variant="contained" color="primary" style={{
+            //             }}>
+            //                 Add
+            //             </Button>
+            //             {/* put a space between two button */}
+
+            //             <Button variant="contained" color="primary" style={{
+            //                 marginLeft: "20px",
+
+            //             }}>
+            //                 multiple
+            //             </Button>
+                    
+                    
+
+            //         </Grid>
+            //         <Grid item xs={12} sm={12}>
+            //         <Grid item xs={12} sm={12}>
+            //             {/* put a image preview 200x200*/}
+            //             <img src={url} alt = "image" style={{
+            //                 width: "600px",
+            //                 height: "400px",
+                            
+            //                 margin: "auto",
+            //                 marginTop: "20px",
+            //                 marginBottom: "20px",
+            //                 marginLeft: "20px",
+            //                 marginRight: "20px",
+            //                 backgroundColor: "#f5f5f5",
+            //             }} />
+
+
+            //         </Grid>
+            //         </Grid>
+                    
+
+            //         <Grid item sm={10}/>
+
+            //         <Grid item sm={1}>
+                   
+            //         </Grid>
+
+
+            //     </Grid>
+            //     {/* image preview section ends */}
+            //     <Grid item xs={3}>
+            //         <h1>Your image details</h1>
+            //     </Grid>
+            //     <Grid item xs={1} />
+
+            // </Grid>
