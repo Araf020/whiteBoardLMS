@@ -51,6 +51,7 @@ public class Assignments {
 
 
     public Assignments() {
+        graded = false;
     }
 
     public Assignments(String assTitle, String spec, String description) {

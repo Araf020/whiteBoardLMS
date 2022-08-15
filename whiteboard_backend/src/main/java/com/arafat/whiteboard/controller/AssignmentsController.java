@@ -1,7 +1,10 @@
 package com.arafat.whiteboard.controller;
 
 import com.arafat.whiteboard.model.Assignments;
+import com.arafat.whiteboard.model.Enrollment;
 import com.arafat.whiteboard.repository.AssignmentRepo;
+import com.arafat.whiteboard.repository.EnrollmentRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,10 @@ public class AssignmentsController {
 
     @Autowired
     private AssignmentRepo assignmentRepo;
+
+    @Autowired
+    private EnrollmentRepo enrRepo;
+
 
 
     // tested: works
@@ -102,5 +109,62 @@ public class AssignmentsController {
        return new ResponseEntity<>(assignment_2, HttpStatus.OK);
 
    }
+   @GetMapping("/upassignments")
+//    update all assignments graded field to true
+    public ResponseEntity<List<Assignments>> updateAllAssignmentsGraded() {
+        //      get all assignments
+        // handle if a primitive field is null
+        
+        List<Assignments> assignments = new ArrayList<>(assignmentRepo.findAll());
+        //      update all assignments graded field to true
+        for (Assignments assignment : assignments) {
+            assignment.setGraded(true);
+        }
+        //      put to db
+        try{
+            assignmentRepo.saveAll(assignments);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(assignments, HttpStatus.OK);
+    }
+
+    private List<Long> getAllCoursesByStudentId(Long student_id) {
+        List<Enrollment> enrollments = new ArrayList<>(enrRepo.findByStudentStudentId(student_id));
+        List<Long> courseIds = new ArrayList<>();
+        for (Enrollment enrollment : enrollments) {
+            courseIds.add(enrollment.getCourse().getcourseId());
+        }
+        return courseIds;
+
+
+    }
+
+    private List<Assignments> getAssignmentsByStudentId(Long student_id) {
+
+        List<Long> courseIds = getAllCoursesByStudentId(student_id);
+        List<Assignments> assignments = new ArrayList<>();
+            // find all assignments by course id
+        for (Long courseId : courseIds) {
+            assignments.addAll(assignmentRepo.findByCourseCourseId(courseId));
+        }
+
+        return assignments;
+    }
+
+    @GetMapping("/assignments_by_student/{studentId}")
+    public ResponseEntity<List<Assignments>> getAllAssignmentsByStudentId(@PathVariable("studentId") Long studentId) {
+
+        List<Assignments> assignments = getAssignmentsByStudentId(studentId);
+
+        if (assignments.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(assignments, HttpStatus.OK);
+
+    }
+
+
 
 }

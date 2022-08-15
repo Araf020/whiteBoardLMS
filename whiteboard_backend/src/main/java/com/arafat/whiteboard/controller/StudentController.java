@@ -1,7 +1,12 @@
 package com.arafat.whiteboard.controller;
 
+import com.arafat.whiteboard.model.Course;
 import com.arafat.whiteboard.model.SchoolStudents;
+import com.arafat.whiteboard.model.Submission;
+import com.arafat.whiteboard.repository.CourseRepo;
 import com.arafat.whiteboard.repository.StudentRepo;
+import com.arafat.whiteboard.repository.SubmissionRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +24,12 @@ public class StudentController {
 
     @Autowired
     private StudentRepo studentRepo;
+    @Autowired
+    private CourseRepo courseRepo;
+
+    @Autowired
+    private SubmissionRepo submissionRepo;
+
 
     @GetMapping("/students")
     public ResponseEntity<List<SchoolStudents>> getAllStudents() {
@@ -125,6 +136,7 @@ public class StudentController {
                 _student.setPhoto_url(photo_url);
             if (email != null)
                 _student.setEmail(email);
+
             _student = studentRepo.save(_student);
 
 
@@ -146,4 +158,52 @@ public class StudentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // get students courses by id
+    @GetMapping("/students/{id}/courses")
+    public ResponseEntity<List<Course>> getStudentCourses(@PathVariable("id") long id) {
+       
+        Optional<SchoolStudents> studentdata = studentRepo.findById(id);
+        
+        List<Course> courses = new ArrayList<>();
+        if (studentdata.isPresent()) {
+            List<Course> courseList = studentdata.get().getCourseList();
+
+            for (Course course : courseList) {
+                Course _course = courseRepo.findById(course.getcourseId()).get();
+                courses.add(_course);
+            }
+
+
+            return new ResponseEntity<>(courses, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // get submission list by id
+    @GetMapping("/students/{id}/submissions")
+    public ResponseEntity<List<Submission>> getStudentSubmissions(@PathVariable("id") long id) {
+        Optional<SchoolStudents> studentdata = studentRepo.findById(id);
+        List<Submission> submissions = new ArrayList<>();
+        
+        if (studentdata.isPresent()) {
+            List<Submission> subs = studentdata.get().getSubmissionList();
+
+            for (Submission sub : subs) {
+                Submission _sub = submissionRepo.findById(sub.getsubmissionId()).get();
+                submissions.add(_sub);
+            }
+            
+            return new ResponseEntity<>(submissions, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+
 }
+
+
+
+

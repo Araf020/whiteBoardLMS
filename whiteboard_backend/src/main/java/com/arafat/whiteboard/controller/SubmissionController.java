@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
-
+@RequestMapping("/api")
 public class SubmissionController {
     @Autowired
     private SubmissionRepo submissionRepo;
@@ -26,7 +26,7 @@ public class SubmissionController {
     @Autowired
     private StudentRepo studentRepo;
 
-    public List<Submission> getSubmissions(Long assignment_id, Long student_id){
+    private List<Submission> getSubmissions(Long assignment_id, Long student_id){
         Optional<Assignments> assignmentData = assignmentRepo.findById(assignment_id);
         Optional<SchoolStudents> studentData = studentRepo.findById(student_id);
         SchoolStudents student;
@@ -56,6 +56,7 @@ public class SubmissionController {
 
     @GetMapping("/submissions_by_assignment/{assignment_id}")
     public ResponseEntity<List<Submission>> getSubmissionsByAssignment(@PathVariable("assignment_id") Long assignment_id){
+       
         Optional<Assignments> assignmentData = assignmentRepo.findById(assignment_id);
         Assignments assignment;
         if(assignmentData.isPresent()){
@@ -89,8 +90,8 @@ public class SubmissionController {
         return new ResponseEntity<>(submissions, HttpStatus.OK);
     }
 
-    @GetMapping("/submissions_by_assignment_and_student/{assignment_id}/{student_id}")
-    public ResponseEntity<List<Submission>> getSubmissionsByAssignmentAndStudent(@PathVariable("assignment_id") Long assignment_id, @PathVariable("student_id") Long student_id){
+    @GetMapping("/submissions_by_assignment_and_student/{assignmentId}/{studentId}")
+    public ResponseEntity<List<Submission>> getSubmissionsByAssignmentAndStudent(@PathVariable("assignmentId") Long assignment_id, @PathVariable("studentId") Long student_id){
 
 
         List<Submission> submissions = getSubmissions(assignment_id, student_id);
@@ -103,27 +104,30 @@ public class SubmissionController {
 
     //insert a submission
     //to insert a submission, you need to pass the assignment_id and student_id
-    @PostMapping("/submissions/{assignment_id}/{student_id}")
-    public ResponseEntity<Submission> insertSubmission(@PathVariable("assignment_id") Long assignment_id, @PathVariable("student_id") Long student_id, @RequestBody Submission submission){
-        Optional<Assignments> assignmentData = assignmentRepo.findById(assignment_id);
-        Optional<SchoolStudents> studentData = studentRepo.findById(student_id);
-        SchoolStudents student;
-        Assignments assignment;
-        if(studentData.isPresent() && assignmentData.isPresent()){
-             student= studentData.get();
-             assignment = assignmentData.get();
+    @PostMapping("/create_submission")
+    public ResponseEntity<Submission> insertSubmission( @RequestBody Submission submission){
+       
+
+        try {
+            Long stdId = submission.getStudent().get_id();
+            SchoolStudents std = studentRepo.findById(stdId).get();
+            std.addSubmission(submission);
+            // update the students submission list
+            studentRepo.save(std);
+            System.out.println("student submission list updated");
+
+            submissionRepo.save(submission);
+            
+            return new ResponseEntity<>(submission, HttpStatus.OK);
         }
-        else {
+        catch (Exception e){
+            
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        submission.setAssignment(assignment);
-        submission.setStudent(student);
-        submissionRepo.save(submission);
-        return new ResponseEntity<>(submission, HttpStatus.OK);
     }
 
     //update a submission deadline
-    @PutMapping("/submissions/{submission_id}")
+    @PutMapping("/updatesubmission_deadline/{submission_id}")
     public ResponseEntity<Submission> updateSubmission(@PathVariable("submission_id") Long submission_id, @RequestBody Submission submission){
         Optional<Submission> submissionData = submissionRepo.findById(submission_id);
         if(submissionData.isPresent()){

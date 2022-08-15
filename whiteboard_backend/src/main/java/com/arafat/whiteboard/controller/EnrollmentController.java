@@ -50,6 +50,7 @@ public class EnrollmentController {
     public ResponseEntity<Enrollment> createEnrollment(@RequestBody Enrollment enrollment) {
         try
         {
+            System.out.println("enrollment active: " + enrollment.isActive());
             enrollmentRepo.save(enrollment);
         }
         catch (Exception e)
@@ -66,14 +67,30 @@ public class EnrollmentController {
     public ResponseEntity<Enrollment> assignCourse(@PathVariable("studentId") long studentId, @PathVariable("courseId") long courseId) {
         try
         {   
-            System.out.println("instructorId: " + studentId);
+            System.out.println("studentId: " + studentId);
             System.out.println("courseId: " + courseId);
+
+            Optional<SchoolStudents> studentData = studentRepo.findById(studentId);
+            if(!studentData.isPresent())
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            
+            SchoolStudents student = studentData.get();
+            // add course to students courseList
+            Course course_ = courseRepo.findById(courseId).get();
+            student.getCourseList().add(course_);
+            studentRepo.save(student);
+
+
+            
 
             Enrollment enrolls = enrollmentRepo.findByCourseCourseIdAndStudentStudentId( courseId,studentId);
 
             enrolls.setActive(false);
             enrolls.setEnrollStatus("approved");
             enrollmentRepo.save(enrolls);
+
+            
+            
             return new ResponseEntity<>(enrolls,HttpStatus.OK);
         }
 
@@ -113,3 +130,6 @@ public class EnrollmentController {
 
 
 }
+
+// see just column names  of a table in posgresql
+

@@ -124,6 +124,11 @@ public class SchoolStudents {
         return studentId;
     }
 
+    public SchoolStudents set_id(long _id) {
+        this.studentId = _id;
+        return this;
+    }
+
     public int getRoll() {
         return roll;
     }
@@ -177,6 +182,17 @@ public class SchoolStudents {
         this.photo_url = photo_url;
         return this;
     }
+
+    // add course
+    public SchoolStudents addCourse(Course course) {
+        this.courseList.add(course);
+        return this;
+    }
+
+    public List<Course> getCourseList() {
+        return courseList;
+    }
+
 
 
 
@@ -282,5 +298,19 @@ public class SchoolStudents {
     }
 
 
+    // add submission
+    public SchoolStudents addSubmission(Submission submission) {
+        this.submissionList.add(submission);
+        return this;
+    }
+
+    public List<Submission> getSubmissionList() {
+        return submissionList;
+    }
+    // add to notice list
+    
+
+
+    
 
 }
