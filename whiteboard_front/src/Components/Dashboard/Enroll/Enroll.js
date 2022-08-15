@@ -3,7 +3,7 @@ import React from 'react';
 
 import useStyles from '../StudentDashBoard/TeamsStyle';
 import {useState, useEffect} from 'react';
-import {Button, Autocomplete, Box,TextField, InputLabel, Select, MenuItem, Input, InputAdornment, IconButton, FormHelperText, FormLabel, RadioGroup, Radio, FormGroup, FormControl} from '@mui/material';
+import {Button,List, ListItem, ListItemText, Autocomplete, Box,TextField, InputLabel, Select, MenuItem, Input, InputAdornment, IconButton, FormHelperText, FormLabel, RadioGroup, Radio, FormGroup, FormControl} from '@mui/material';
 import LibraryAddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import axios from 'axios';
 import Card_ from './CourseCard';
@@ -16,6 +16,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 const Enroll = () => {
 
     const classes = useStyles();
+    const StdId = 5;
 
     const [courseId, setCourseId] = useState();
     const [grade, setGrade]= useState('nine');
@@ -66,17 +67,7 @@ const Enroll = () => {
 
 ];
 
-   useEffect(() => {
-
-      fetch('http://localhost:8080/api/instructors')
-        .then(res => res.json())
-        .then(data => {
-            setInstructorList(data);
-            console.log("inst",data);
-        })
-        .catch(err => console.log(err));
-
-   },[]);
+   
 
    useEffect(() => {
     // get course list by grade
@@ -118,28 +109,52 @@ const Enroll = () => {
 
     }, [courseId]);
 
-    const handleSubmit = (e) => {
+    
+        
+
+    const handleEnroll = (e) => {
         e.preventDefault();
         console.log("submitting..");
+        var success = false;
+
+        // post request for each course in enrollmentList
+        enrollmentList.map(course => {
+            console.log("for course: ",course.courseId);
+            const reqBody = {
+                status: "pending",
+                isActive: "true",
+                enrollDate: "2022-08-15 12:38:00",
+                
+                courseId: course.courseId+"",
+                studentId: StdId+""
+                
+            }
+            console.log("reqBody: ",reqBody);
+
+            fetch('http://localhost:8080/api/create_enrollment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("enrollment response for course:",course.courseTitle);
+                console.log(data);
+                success = true;
+            })
+            .catch(err => {console.log(err); success = false;});
+        })
         
-        // // put request to server using axios
-        // axios.put('http://localhost:8080/api/assign_course/'+instructorId+'/'+courseId,{
-        //     courseId:courseId,
-        //     instructorId:instructorId
-        // })
-        // .then(res => {
-        //     console.log(res);
-        //     // if ok then show greetins message
-        //     alert("Course assigned successfully");
-
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        //     alert("Something went wrong! Try Again");
-        // });
+        if(success){
+            alert("Enrollment Successful");
+        }
+       
+        }
+        
 
 
-    }
 
     useEffect(() => {
         console.log("courseList",enrollmentList);
@@ -149,14 +164,17 @@ const Enroll = () => {
     return (
         <div className='classes.root'>
             <main className={classes.content}>
-            <Typography>Offered Courses</Typography>
-                    <Grid container>
+                <Paper className="paper" sx={{width:'100%'}}>
+                        <Typography >OFERRED COURSES</Typography>
+                </Paper>
+                <Grid container spacing={3} direction='column'>
+                    <Grid item container spacing={1}  sx={{maxHeight:500,overflow:'auto'}}>
                         {/* return a card for every course in courses */}
                         {courseList.map(course => (
                             <Grid item xs={12} sm={6} md={4}>
                                 <CardActionArea>
                                 <Card className={classes.card} style={{background:'#f7f8fa'}}>
-                                    <CardContent>
+                                    {/* <CardContent> */}
                                     <div className={classes.courseHeader} style={{background:'#005671'}}>
                                                 {/* change font in typography */}
                                                 {/* give some padding in left */}
@@ -167,7 +185,7 @@ const Enroll = () => {
                                                 <Typography variant="h6" style={{color:'white',fontWeight:'bold',paddingLeft:'15px'}}>{course.courseDescription}</Typography>
                                                 <Typography variant="h9" style={{color:'white',paddingLeft:'15px'}}>{course.courseCode}</Typography>
                                     </div>
-                                    </CardContent>
+                                    {/* </CardContent> */}
                                    
 
                                     <CardActions>
@@ -207,6 +225,38 @@ const Enroll = () => {
                             </Grid>
                         ))}
                     </Grid>
+                    <Grid item container spacing={1}>
+                        <Paper sx={{width:"100%"}}>
+                                    {/* selected course lis */}
+                                    <Typography variant="h5" style={{paddingLeft:'15px'}}>SELECTED COURSES:</Typography>
+                                    <List dense={true}>
+                                        {enrollmentList.map(course => (
+                                            <ListItem>
+                                                <ListItemText primary={course.courseTitle} />
+                                                {/* <ListItemText primary={course.courseCode} /> */}
+                                            </ListItem>
+                                        ))}
+                                    </List>
+
+                        </Paper>
+                    </Grid>
+                    <Grid item container spacing={1}>
+                        <Grid item sm={4}/>
+
+                        <Grid item xs={12} sm={2} md={4}>
+                            <Button variant='contained' fullWidth onClick={handleEnroll}>
+                                Enroll
+                            </Button>
+                        </Grid>
+                    <Grid item sm={5}/>
+                    </Grid>
+                    <Grid item>
+
+                    </Grid>
+                    <Grid item>
+                    </Grid>
+
+                </Grid>
             </main>
 
         </div>

@@ -10,95 +10,162 @@ const Approve = () => {
 
     const [course_Id, setCourseId] = useState();
     const [requestList, setRequestList] = useState([]);
-    const [courseList, setCourseList] = useState([]);
+    const [enrolls, setEnrolls] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [eCourseId, setECourseId] = useState([]);
+    const[studentId, setStudentId] = useState();
+
+    const [clickedEnrollId, setClickedEnrollId] = useState();
+
+
+    const removeItem = (clickedEnrollId) => {
+        const newList = requestList.filter(request => request.enrollId !== clickedEnrollId);
+        setRequestList(newList);
+
+    }
+    useEffect(() => {
+     if(clickedEnrollId){
+        console.log("clickedEnrollId: ", clickedEnrollId);
+       fetch('http://localhost:8080/api/enroll/approve/'+studentId+'/'+eCourseId, {
+         method: 'PUT',
+         headers: {
+           'Content-Type': 'application/json'}
+         })
+         .then(res => res.json())
+         .then(data => {
+           console.log("approved..");
+           console.log(data);
+           removeItem(clickedEnrollId);
+         }).catch(err => {
+           console.log(err);
+         });
+     }
+    }, [clickedEnrollId]);
 
    
-
-    const courses = [{
-        id:1,
-        courseTitle:'Bangla language studies',
-        courseCode:'BAN101'
-    },
-    {
-        id:2,
-        courseTitle:'English language studies',
-        courseCode:'ENG101'
-    },
-    {
-        id:3,
-        courseTitle:'Mathematics',
-        courseCode:'MAT101'
+    useEffect(() => {
+        const url = 'http://localhost:8080/api/courses';
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                setCourses(data);
+                console.log(data);
+                console.log("coursesList dash: ", courses);
+                alert("Aprroved Successfully!");
+                
+                
+            }).catch(err => {
+                console.log(err);
+            }
+            );
+    } , []);
+    // const courses = [{
+    //     id:1,
+    //     courseTitle:'Bangla language studies',
+    //     courseCode:'BAN101'
+    // },
+    // {
+    //     id:2,
+    //     courseTitle:'English language studies',
+    //     courseCode:'ENG101'
+    // },
+    // {
+    //     id:3,
+    //     courseTitle:'Mathematics',
+    //     courseCode:'MAT101'
     
-    },
-    {
-        id:4,
-        courseTitle:'Physics',
-        courseCode:'PHY101'
-    }
+    // },
+    // {
+    //     id:4,
+    //     courseTitle:'Physics',
+    //     courseCode:'PHY101'
+    // }
 
-    ];
+    // ];
 
     const getCourseNameById = (id) => {
-        const course = courses.find(course => course.id === id);
+        const course = courses.find(course => course.courseId === id);
         return course ? course.courseTitle : '';
     }
 
-    const requests = [{
-        id:1,
-        name:'Rakib',
-        studentId:1,
-        courseId:1,
-        courseName:"",
-        grade:'nine'
+//     const requests = [{
+//         id:1,
+//         name:'Rakib',
+//         studentId:1,
+//         courseId:1,
+//         courseName:"",
+//         grade:'nine'
 
 
-    },
-    {
-        id:2,
-        name:'Naeem',
-        studentId:2,
-        courseId:2,
-        courseName:"",
-        grade:'nine'
-    },
-    {
-        id:3,
-        name:'Nasim',
-        studentId:3,
-        courseId:3,
-        courseName:"",
-        grade:'nine'
-    },
-    {
-        id:4,
-        name:'Rakib',
-        courseId:3,
-        courseName:"",
-        grade:'nine'
-    },
-    {
-        id:5,
-        name:'Ruhul',
-        studentId:4,
-        courseId:1,
-        courseName:"",
-        grade:'nine'
-    },
-    {
-        id:6,
-        name:'Rezwan',
-        studentId:4,
-        courseId:1,
-        courseName: "",
-        grade:'nine'
+//     },
+//     {
+//         id:2,
+//         name:'Naeem',
+//         studentId:2,
+//         courseId:2,
+//         courseName:"",
+//         grade:'nine'
+//     },
+//     {
+//         id:3,
+//         name:'Nasim',
+//         studentId:3,
+//         courseId:3,
+//         courseName:"",
+//         grade:'nine'
+//     },
+//     {
+//         id:4,
+//         name:'Rakib',
+//         courseId:3,
+//         courseName:"",
+//         grade:'nine'
+//     },
+//     {
+//         id:5,
+//         name:'Ruhul',
+//         studentId:4,
+//         courseId:1,
+//         courseName:"",
+//         grade:'nine'
+//     },
+//     {
+//         id:6,
+//         name:'Rezwan',
+//         studentId:4,
+//         courseId:1,
+//         courseName: "",
+//         grade:'nine'
     
 
 
-    }
-];
+//     }
+// ];
+
+useEffect(() => {
+    const url = 'http://localhost:8080/api/enrollments/active/';
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // disable cors
+        'Access-Control-Allow-Origin': '*',
+      }
+      })
+      .then(res => res.json())
+      .then(data => {
+        setEnrolls(data);
+        setRequestList(data);
+        // console.log(data);
+        console.log("due enrolls: ", data);
+      }).catch(err => {
+        console.log(err);
+      }
+      );
+  } , []);
 
 const getrequestListByCourseId = (id) => {
-    let requestList = requests.filter(request => request.courseId === id);
+    let requestList = enrolls.filter(request => request.courseId === id);
     // add courseNAme to requestList
     requestList.forEach(request => {
         request.courseName = getCourseNameById(request.courseId);
@@ -135,8 +202,8 @@ useEffect(() => {
                             sx={{ width: 300 }}
                             value={course_Id}
                             onChange={(event, newValue) => {
-                            console.log(newValue.id);
-                            setCourseId(newValue.id);
+                            console.log(newValue.courseId);
+                            setCourseId(newValue.courseId);
                             
                             }}
                             options={courses}
@@ -170,7 +237,7 @@ useEffect(() => {
                             
                                 return(
                                     <Grid item xs={12} sm={6} md={4} lg={3}>
-                                        <Enrollment request={request}/>
+                                        <Enrollment request={request} setClickedEnrollId={setClickedEnrollId} setECourseId={setECourseId} setStudentId={setStudentId}/>
                                     </Grid>
                                 )
                             

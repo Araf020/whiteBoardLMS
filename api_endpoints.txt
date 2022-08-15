@@ -1,0 +1,39 @@
+submission by stdid
+localhost:8080/api/students/2/submissions
+
+course by stdid
+localhost:8080/api/students/2/courses
+
+course of instructors by id
+http://localhost:8080/api/instructor/course/600007
+
+create enroll
+http://localhost:8080/api/create_enrollment
+body :
+{
+  
+   "status": "pending",
+    "isActive": "true",
+    "enrollDate": "2022-08-15 12:38:00",
+    
+    "courseId": "13",
+    "studentId": "3"
+
+}
+
+Put : approve enroll: /std/course
+http://localhost:8080/api/enroll/approve/3/13
+
+assignments
+http://localhost:8080/api/assignments_by_student/2
+
+create:
+http://localhost:8080/api/create_assignment
+body:
+{
+    "title": "Another Assignment on  Science",
+    "description": "This is an group assignment. The groups will be arranged and i will let you know. The assignment is attached below",
+    "deadline": "2022-08-29 03:22:40",
+    "specLink":"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    "courseId": "3"
+}

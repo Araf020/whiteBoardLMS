@@ -5,26 +5,30 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import {useState, useEffect} from 'react';
 
-export default function Enrollment({request}) {
+export default function Enrollment({request,setClickedEnrollId, setECourseId, setStudentId}) {
   // destructure props
-  const {id, name, studentId, courseId,courseName, grade} = request;
+  // const {id, name, studentId, courseId,courseName, grade} = request;
+  const {enrollId, studentId, courseId} = request;
+
+ 
 
   return (
     <Card sx={{ maxWidth: 1080 }}>
      
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          Name: {name}
+          Name: 
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Roll: {studentId}
+          StudentId: {studentId}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Class: {grade}
+          Class: 
         </Typography>
         <Typography variant="body2" color="text.secondary">
-        Course Name: {courseName}
+        Course Name:
         </Typography>
         <Typography variant="body2" color="text.secondary">
         Course ID: {courseId}
@@ -32,8 +36,11 @@ export default function Enrollment({request}) {
 
       </CardContent>
       <CardActions>
-        <Button size="small">Approve</Button>
-        <Button size="small">Reject</Button>
+        <Button variant='outlined' size="small" onClick={(e)=>{
+          setClickedEnrollId(enrollId);
+          setECourseId(courseId);
+          setStudentId(studentId);
+        }}>Approve</Button>
        
       </CardActions>
     </Card>

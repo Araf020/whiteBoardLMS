@@ -27,7 +27,7 @@ function Login() {
               className={classes.title}
               variant="h3"
             >
-              Login to Google Classroom and start working
+              Welcome to Whiteboard
             </Typography>
           </div>
           <form onSubmit={handleSubmit(onSubmit)}>

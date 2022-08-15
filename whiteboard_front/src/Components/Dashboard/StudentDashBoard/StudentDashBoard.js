@@ -1,4 +1,4 @@
-import { Grid, Typography,Card,CardContent} from '@mui/material';
+import { Grid, Typography,Card,CardContent, Paper} from '@mui/material';
 import React from 'react';
 import Sidebar from '../Sidebar'
 import Declarations from '../Announcement/Declarations';
@@ -13,6 +13,7 @@ import Enrollment from '../Enroll/Enroll';
 
 function Teams() {
     const classes = useStyles();
+    const StdId = 3;
 
     // fetch courses from server api
     const [courses, setCourses] = useState([]);
@@ -21,16 +22,13 @@ function Teams() {
     
     
     useEffect(() => {
-        fetch('http://localhost:8080/api/courses', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'}
-            })
+        const url = 'http://localhost:8080/api/students/'+StdId+'/courses';
+        fetch(url)
             .then(res => res.json())
             .then(data => {
                 setCourses(data);
                 console.log(data);
-                console.log("courses: ", courses);
+                console.log("coursesList dash: ", courses);
                 // setComponent(
                 // <div>
                 //     <Typography>Your Courses</Typography> 
@@ -74,7 +72,7 @@ function Teams() {
             setComponent(
                 <div>
                     <Typography>Your Due Assignments</Typography>
-                    <DueAssignment/>
+                    <DueAssignment studentId={StdId}/>
                 </div>
             );
         }
@@ -82,7 +80,7 @@ function Teams() {
             setComponent(
                 <div>
                     <Typography>Your Completed Assignments</Typography>
-                    <CompletedAssignment />
+                    <CompletedAssignment studentId={StdId} />
                 </div>
             );
 
@@ -98,7 +96,9 @@ function Teams() {
         else if(option === 'notice'){
             setComponent(
                 <div>
-                    <Typography>Your Notices</Typography>
+                    <Paper sx ={{width:'100%', paddingLeft:'20px', paddingBottom:'20px',paddingTop:'20px'}}>
+                    <Typography>YOUR NOTICES</Typography>
+                    </Paper>
                     <Declarations />
                 </div>
             );
@@ -106,7 +106,10 @@ function Teams() {
         else if(option === 'enroll'){
             setComponent(
                 <div>
-                    <Typography>Enrollment</Typography>
+                <Paper sx ={{width:'100%',paddingLeft:'20px', paddingBottom:'20px',paddingTop:'20px'}}>
+                <Typography>ENROLLMENT</Typography>
+                </Paper>
+                   
                     <Enrollment />
                 </div>
             );

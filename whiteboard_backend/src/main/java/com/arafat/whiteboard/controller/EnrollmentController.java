@@ -37,11 +37,34 @@ public class EnrollmentController {
 
         List<Enrollment> enrolls = new ArrayList<>(enrollmentRepo.findAll());
 
+        // filter out which are pending
+        
 
         if (enrolls.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         return new ResponseEntity<>(enrolls, HttpStatus.OK);
+
+    }
+    @GetMapping("/enrollments/active")
+    public ResponseEntity<List<Enrollment>> getActiveEnrollments() {
+
+        List<Enrollment> enrolls = new ArrayList<>(enrollmentRepo.findAll());
+
+        // filter out which are pending
+        List<Enrollment> pendingEnrolls = new ArrayList<>();
+        for (Enrollment e : enrolls) {
+            if (e.getEnrollStatus().equals("pending")) {
+                pendingEnrolls.add(e);
+            }
+        }
+
+        
+
+        if (pendingEnrolls.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(pendingEnrolls, HttpStatus.OK);
 
     }
 
@@ -131,5 +154,4 @@ public class EnrollmentController {
 
 }
 
-// see just column names  of a table in posgresql
 
