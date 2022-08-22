@@ -29,7 +29,7 @@ public class AssignmentsController {
 
 
     // tested: works
-    @GetMapping("/assignments/{course_id}")
+    @GetMapping("/assignments_by_course/{course_id}")
     public ResponseEntity<List<Assignments>> getAllAssignmentsByCourseId(@PathVariable("course_id") Long course_id) {
 
         List<Assignments> assignments = new ArrayList<>(assignmentRepo.findByCourseCourseId(course_id));
@@ -164,6 +164,8 @@ public class AssignmentsController {
         return new ResponseEntity<>(assignments, HttpStatus.OK);
 
     }
+
+    
 
 
 

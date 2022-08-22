@@ -10,14 +10,17 @@ import LibraryAddTwoToneIcon from '@mui/icons-material/LibraryAddTwoTone';
 
 const Responses = () => {
 
+    const instructorId = 600000;
     const [courseId, setCourseId] = useState();
     const [session, setSession]= useState();
     const [desc, setDesc] = useState('No Description Added!');
     const [assignmentId, setAssignmentId] = useState();
-
-    const[assignmentList, setAssignmentList] = useState();
+    const [assignmentList, setAssignmentList] = useState([]);
 
     const [dueDate, setDueDate] = useState(''); 
+    const [courseList, setCourseList] = useState([]);
+    const [allAssignment, setAllassignmentList] = useState([]);
+
 
     const [assFile,setAssFile] = useState(null);
 
@@ -84,7 +87,29 @@ const Responses = () => {
 
 
 
-]
+];
+
+    useEffect(() => {
+        // fetch all courses by instructor id
+        fetch('http://localhost:8080/api//instructor/course/'+instructorId, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('courses: ',data);
+            setCourseList(data);
+        }
+        ).catch(err => {
+            console.log('courses fetch failed..')
+            console.log(err);
+        }
+        );
+    } , []);
+
+   
+
+   
 
     const getAssignmentListByCourseId = (id) => {
         const list = assignments.filter(assignment => assignment.courseId === id);

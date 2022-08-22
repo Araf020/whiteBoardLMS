@@ -1,8 +1,8 @@
 import { Card, CardActionArea, Typography } from "@mui/material";
-import useStyles from './TeamsStyle';
+import useStyles from '../Dashboard/StudentDashBoard/TeamsStyle';
 
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, setCourseId, setCourseTitle }) => {
     const classes = useStyles();
 
     const {
@@ -16,9 +16,12 @@ const CourseCard = ({ course }) => {
         ...rest
     } = course;
     
-    const courseUrl = '/courses/'+ courseTitle +'/'+ courseId;
+    // const courseUrl = '/courses/'+ courseTitle +'/'+ courseId;
     return (
-        <CardActionArea onClick={(e)=>{console.log("i m clicked..")}}>
+        <CardActionArea onClick={(e)=>{
+            setCourseId(courseId);
+            setCourseTitle(courseTitle);
+        }}>
         <Card className={classes.card} style={{background:'#f7f8fa',margin:'10px'}}>
             <div className={classes.courseHeader} style={{background:'#005671'}}>
                         {/* change font in typography */}

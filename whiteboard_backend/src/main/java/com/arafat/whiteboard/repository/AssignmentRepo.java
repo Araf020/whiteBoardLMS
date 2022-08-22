@@ -14,6 +14,7 @@ public interface AssignmentRepo extends JpaRepository<Assignments, Long> {
     List<Assignments> findByCourseCourseId(Long course_id);
     // find assignment by is graded
     List<Assignments> findByGraded(boolean graded);
+   
 
 
 

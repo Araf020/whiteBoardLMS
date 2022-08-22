@@ -7,21 +7,28 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardActionArea, Grid } from '@mui/material';
 import {useState,useEffect} from 'react';
+import SubmissionPanel from '../Submission/Submission';
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-  >
-    •
-  </Box>
-);
 
 const DueAssignment=(props) => {
 
     // destructuring the props
-    const {studentId} = props;
+    const {studentId, courseId} = props;
     const [assignmentList, setAssignmentList] = useState([]);
+    const [selectedAssId, setSelectedAssId] = useState();
+    const [component, setComponent] = useState(<div></div>);
+    const stdId = 5;
+
+    const filterbyCourse = (assignmentList, courseId) => {
+      if(courseId){
+        // filter it by courseId
+        const filteredAssignmentList = assignmentList.filter(assignment => assignment.courseId === courseId);
+        setAssignmentList(filteredAssignmentList);
+      }
+      else{
+        setAssignmentList(assignmentList);
+      }
+   }
 
   useEffect(() => {
     console.log("got stdid:",studentId)
@@ -36,7 +43,43 @@ const DueAssignment=(props) => {
       })
       .then(res => res.json())
       .then(data => {
+        // filterbyCourse(data,courseId);
         setAssignmentList(data);
+        setComponent(
+            <Grid container spacing={1} >
+            {data.map(assignment => (
+              <Grid item xs={12}>
+
+              <CardActionArea onClick={(e)=>{setSelectedAssId(assignment.assignmentId)}}>
+              <Card style={{ minWidth:275 , height:'80%' , backgroundColor:'#f5f5f5'}}>
+              {/* <Card sx={{ minWidth: 275 }}> */}
+                <CardContent>
+                  <Typography  variant="h5"  sx={{ fontSize: 21 }} color="text.secondary" gutterBottom>
+                    {assignment.title}
+                  </Typography>
+                  
+                  <Typography  sx={{ mb: 1.5 }} color="text.secondary">
+                    {assignment.description}
+                  </Typography>
+                  {/* make it bold */}
+                  <Typography variant="h5" sx={{ mb: 1.5, font:'caption' }} color="text.secondary">
+                    {formatDate(assignment.deadline)}
+                  </Typography>
+                  
+                </CardContent>
+                {/* <CardActions>
+                  <Button size="small">Learn More</Button>
+                </CardActions> */}
+              </Card>
+              </CardActionArea>
+              </Grid>
+
+              
+              
+            ))}
+          </Grid>
+        );
+        
         // console.log(data);
         console.log("due assignmentList: ", data);
       }).catch(err => {
@@ -44,8 +87,22 @@ const DueAssignment=(props) => {
       }
       );
   } , []);
-  const formatDate=(date)=>
-  {
+
+  
+
+ useEffect(() => {
+    
+    setComponent(
+       <SubmissionPanel assignmentId={selectedAssId} studentId={studentId} />
+
+    )
+    console.log("assignment selected: ", selectedAssId);
+
+
+ } , [selectedAssId]);
+
+
+  const formatDate = (date) => {
     // format to i.e 6 jan, saturday at 3:00pm
     var d = new Date(date);
     var weekday = new Array(7);
@@ -81,39 +138,11 @@ const DueAssignment=(props) => {
     return date;
   }
 
+
   return (
-    <Grid container spacing={1} >
-       {assignmentList.map(assignment => (
-         <Grid item xs={12}>
-
-         <CardActionArea href='/#'>
-         <Card style={{ minWidth:275 , height:'80%' , backgroundColor:'#f5f5f5'}}>
-         {/* <Card sx={{ minWidth: 275 }}> */}
-           <CardContent>
-             <Typography  variant="h5"  sx={{ fontSize: 21 }} color="text.secondary" gutterBottom>
-              {assignment.title}
-             </Typography>
-             
-             <Typography  sx={{ mb: 1.5 }} color="text.secondary">
-               {assignment.description}
-             </Typography>
-             {/* make it bold */}
-             <Typography variant="h5" sx={{ mb: 1.5, font:'caption' }} color="text.secondary">
-               {formatDate(assignment.deadline)}
-             </Typography>
-             
-           </CardContent>
-           {/* <CardActions>
-             <Button size="small">Learn More</Button>
-           </CardActions> */}
-         </Card>
-         </CardActionArea>
-         </Grid>
-
-        
-        
-      ))}
-    </Grid>
+    <div>
+      {component}
+    </div>
 
     
   );

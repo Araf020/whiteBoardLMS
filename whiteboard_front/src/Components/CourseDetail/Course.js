@@ -23,31 +23,26 @@ import CompletedAssignment from '../Assignments/Completed';
 import Grade from '../Scores/Grade';
 import CourseFiles from '../CourseMaterials/Materials';
 
-const CourseDetail = () => {
+const CourseDetail = (props) => {
     const classes = useStyles();
-
+    const stdId = 5;
+    const { courseTitle, courseId } = props;
     // useState to store the option selected
    
     
-    const [component, setComponent] = useState(<DueAssignment/>);
+    const [component, setComponent] = useState(<DueAssignment courseId={courseId}  studentId={stdId}/>);
     // get the courseId from the url
     // using useParams from react-router-dom
-    const { courseTitle, courseId } = useParams();
+    // const { courseTitle, courseId } = useParams();
+   
     
 
    
 
-    const stdId = 2;
     
-    console.log("courseId: ", courseId);
+    console.log("courseId in courseDetail: ", courseId);
     return (
-        <div className={classes.root} >
-            <Sidebar/>
-            {/* make grid of two column  */}
-            {/* first column got 1/4th of area */}
-            {/* second column got 3/4th of area */}
-            <main className={classes.content}>
-                {/* <Typography>Course Detail</Typography> */}
+       
                 <Grid container>
                     {/* first column */}
                     <Grid item xs={12} sm={6} md={3}>
@@ -159,8 +154,8 @@ const CourseDetail = () => {
                     {/* second column */}
                    {/* which got 3/4th of area */}
                     <Grid item xs={12} sm={6} md={9}>
-                        <Paper className={classes.paper} style={{paddingTop:'45px'}}>
-                            <Typography>Course Actions</Typography>
+                        <Paper className={classes.paper} style={{paddingTop:'2px', height:'100%', backgroundColor:'#f5f5f5'}}>
+                            
                             <Divider />
                             {component}
                             {/* <CourseFiles /> */}
@@ -171,12 +166,7 @@ const CourseDetail = () => {
                         </Paper>
                     </Grid>
                 </Grid>
-            </main>
-        
-
-
-
-        </div>
+           
     );
 
 

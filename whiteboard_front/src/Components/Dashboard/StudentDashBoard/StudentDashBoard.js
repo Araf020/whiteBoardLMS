@@ -9,11 +9,12 @@ import useStyles from './TeamsStyle';
 import Card_ from './CourseCard';
 import {useState, useEffect} from 'react';
 import Enrollment from '../Enroll/Enroll';
+import CoursePanel from '../../CourseDetail/CoursePanel';
 
 
 function Teams() {
     const classes = useStyles();
-    const StdId = 3;
+    const StdId = 5;
 
     // fetch courses from server api
     const [courses, setCourses] = useState([]);
@@ -28,21 +29,23 @@ function Teams() {
             .then(data => {
                 setCourses(data);
                 console.log(data);
-                console.log("coursesList dash: ", courses);
-                // setComponent(
-                // <div>
-                //     <Typography>Your Courses</Typography> 
-                //     <Grid container>
+                console.log("coursesList in studentDash: ", courses);
+               
+
+                setComponent(
+                <div>
+                    <Typography>Your Courses</Typography> 
+                    <Grid container>
                     
-                //         {/* return a card for every course in courses */}
-                //         {courses.map(course => (
-                //             <Grid item xs={12} sm={6} md={4}>  
-                //                 <Card_ course={course} />
-                //             </Grid>
-                //         ))}
+                        {/* return a card for every course in courses */}
+                        {data.map(course => (
+                            <Grid item xs={12} sm={6} md={4}>  
+                                <Card_ course={course} />
+                            </Grid>
+                        ))}
                     
-                //     </Grid>
-                // </div>);
+                    </Grid>
+                </div>);
                 
             }).catch(err => {
                 console.log(err);
@@ -55,17 +58,24 @@ function Teams() {
     useEffect(() => {
         if(option === 'course'){
             setComponent(
+                
                 <div>
                     <Typography>Your Courses</Typography>
-                    <Grid container>
-                        {/* return a card for every course in courses */}
+                    <CoursePanel courses={courses}/>
+                    
+                    {/* <Grid container>
                         {courses.map(course => (
                             <Grid item xs={12} sm={6} md={4}>
                                 <Card_ course={course} />
                             </Grid>
                         ))}
-                    </Grid>
+                    </Grid> */}
+                  
+                    
                 </div>
+                    // {/* <CoursePanel courses={courses} /> */}
+                    
+               
             );
         }
         else if(option === 'due'){

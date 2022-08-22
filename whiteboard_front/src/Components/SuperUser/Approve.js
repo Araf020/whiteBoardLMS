@@ -29,7 +29,8 @@ const Approve = () => {
        fetch('http://localhost:8080/api/enroll/approve/'+studentId+'/'+eCourseId, {
          method: 'PUT',
          headers: {
-           'Content-Type': 'application/json'}
+           'Content-Type': 'application/json'
+        }
          })
          .then(res => res.json())
          .then(data => {
@@ -51,7 +52,7 @@ const Approve = () => {
                 setCourses(data);
                 console.log(data);
                 console.log("coursesList dash: ", courses);
-                alert("Aprroved Successfully!");
+                // alert("Aprroved Successfully!");
                 
                 
             }).catch(err => {
