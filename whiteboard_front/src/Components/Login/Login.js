@@ -3,6 +3,7 @@ import React from 'react';
 import useStyles from './LoginStyle';
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import Authenticate from './Authorize';
 
 function Login() {
     const classes = useStyles();
@@ -13,7 +14,9 @@ function Login() {
 
     } = useForm();
     const onSubmit = (data) => {
-      console.log(data);
+      // console.log(data);
+      Authenticate(data);
+
      
     };
     return (
@@ -37,24 +40,24 @@ function Login() {
           <br/>
           <Grid>
             <Grid item>
-            <TextField style={{ width: "70%", height: "78px" }} helperText={errors.email?.message} {...register("email", { required: " Email is required" })} error={Boolean(errors.email)} className={classes.textField} id="outlined-basic" name="email" label="Email*" variant="outlined" />
+            <TextField style={{ width: "70%", height: "78px" }} helperText={errors.username?.message} {...register("username", { required: " UserName is required" })} error={Boolean(errors.username)} className={classes.textField} id="outlined-basic" name="username" label="Username*" variant="outlined" />
             <TextField style={{ width: "70%", height: "78px" }} {...register("password", { required: " Password is required" })} type="password" error={Boolean(errors.password)} helperText={errors.password?.message} className={classes.textField} id="outlined-basic" name="password" label="Password*" variant="outlined" />
            
-            <div>
+            {/* <div>
                 <Checkbox
                 color="primary"
                 />
                 Remember Me 
-            </div>
+            </div> */}
             <div>
-            <Button type="submit" variant="outlined">Login</Button>
+            <Button type="submit" variant="contained">Login</Button>
             </div>
-            <Typography className={classes.title}>
+            {/* <Typography className={classes.title}>
             <strong>Not a member yet?</strong>
             <Link to="/">
               <Button  color="primary">SignUP</Button>
             </Link>
-          </Typography>
+          </Typography> */}
             </Grid>
           </Grid>
           </Card>

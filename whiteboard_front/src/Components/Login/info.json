@@ -1,0 +1,20 @@
+  {
+    "users": [
+      {
+        "username": "arafat12",
+        "password": "hehe",
+        "access_level": "admin"
+      },
+      {
+        "username": "std12",
+        "password": "1234",
+        "access_level": "student"
+      },
+      {
+        "username": "abulkashem",
+        "password": "abul12",
+        "access_level": "instructor"
+
+      }
+    ]
+  }

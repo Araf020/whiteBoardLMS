@@ -10,9 +10,15 @@ import Card_ from './CourseCard';
 import {useState, useEffect} from 'react';
 import Enrollment from '../Enroll/Enroll';
 import CoursePanel from '../../CourseDetail/CoursePanel';
-
+import useAuth from '../../Login/Authenticate';
 
 function Teams() {
+    // check if the user is logged in
+    var authenticated = useAuth();
+    if(!authenticated){
+        window.location.href = '/login';
+    }
+    console.log("authenticated: ", authenticated);
     const classes = useStyles();
     const StdId = 5;
 
